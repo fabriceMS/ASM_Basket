@@ -69,9 +69,9 @@ def calculateAge(birthDate, today=date.today()):
 
 
 # Indique si c'est INTRA ou EXTRA
-def getIntraExtra(city):
-    CITY_NAME = 'MANTES-LA-JOLIE'
-    if city == CITY_NAME:
+def getIntraExtra(city,city_to_compare='MANTES-LA-JOLIE'):
+    
+    if city == city_to_compare:
         return 'INTRA'
     else:
         return 'EXTRA'
@@ -117,11 +117,26 @@ def load_csv(csvFile):
     
     
     
-    df['Age'] = age_array
+    df['age'] = age_array
     df['INTRA/EXTRA'] = intra_extra_array
     df['Category'] = category_array
     df['Price'] = price_array
     df.to_csv('new_data.csv')
+
+    new_df = df.filter(['nom','prenom','adresse','code_postal','lb_cname','INTRA/EXTRA','age','naissance','id_lice','sexe','taille','Price', 'Category'])
+    new_df.fillna(0, inplace=True)
+    convert_dict = {'code_postal': int, 'age': int, 'id_lice': int, 'taille': int, 'Price': int}
+    new_df.code_postal.astype(int)
+    
+    
+    new_df = new_df.astype(convert_dict)
+    print(new_df.info())
+    new_df.to_csv('new_data.csv')
+    #new_df.to_json('new_data.json')
+
+
+
+
     #print (df.info())
     #print (df.head())
     
