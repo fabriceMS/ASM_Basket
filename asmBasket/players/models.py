@@ -27,6 +27,8 @@ class Joueur(models.Model):
     code_postal = models.IntegerField()
     commune = models.CharField(max_length=100)
     intra_extra = models.CharField(max_length=10)
+    categorie = models.CharField(max_length=100)
+    prix = models.IntegerField()
     #categorie = models.ForeignKey()
     #saison = models.ForeignKey()
     age = models.IntegerField()

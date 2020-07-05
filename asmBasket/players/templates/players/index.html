@@ -1,8 +1,82 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<p>Paragraphe pour tester</p>
+<hr>
+<h3 class="font-weight-bold">Liste des joueurs</h3>
+<p>Il y a {{ nb_intra }} joueurs en intra, avec pour prix: <strong>{{ prix_intra }}€</strong></p>
+<p>Il y a {{ nb_extra }} joueurs en extra, avec pour prix: <strong>{{ prix_extra }}€</strong></p>
+<p>Soit un total à retourner de : <strong>{{ total_retour }}€</strong></p>
 
+<div class="table-responsive-sm">
+    <table class="table ">
+        <thead class="thead-light">
+            <th>Nom</th>
+            <th>Prenom</th>
+            <th>Age</th>
+            <th>Sexe</th>
+            <th>Taille</th>
+            <th>INTRA / EXTRA</th>
+            <th>Prix</th>
+            <th>Categorie</th>
+        </thead>
+        {% for player in players %}
+        <tbody>
+            <td>{{ player.nom }}</td>
+            <td>{{ player.prenom }}</td>
+            <td>{{ player.age }}</td>
+            <td>{{ player.genre }}</td>
+            <td>{{ player.taille }}</td>
+            <td>{{ player.intra_extra }}</td>
+            <td>{{ player.prix }}</td>
+            <td>{{ player.categorie }}</td>
+    
+        </tbody>
+        {% endfor %}
+    </table>
+
+</div>
+
+
+<canvas id="myChart" width="400" height="400"></canvas>
+<script>
+var ctx = document.getElementById('myChart').getContext('2d');
+var myChart = new Chart(ctx, {
+    type: 'bar',
+    data: {
+        labels: ['Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange'],
+        datasets: [{
+            label: '# of Votes',
+            data: [12, 19, 3, 5, 2, 3],
+            backgroundColor: [
+                'rgba(255, 99, 132, 0.2)',
+                'rgba(54, 162, 235, 0.2)',
+                'rgba(255, 206, 86, 0.2)',
+                'rgba(75, 192, 192, 0.2)',
+                'rgba(153, 102, 255, 0.2)',
+                'rgba(255, 159, 64, 0.2)'
+            ],
+            borderColor: [
+                'rgba(255, 99, 132, 1)',
+                'rgba(54, 162, 235, 1)',
+                'rgba(255, 206, 86, 1)',
+                'rgba(75, 192, 192, 1)',
+                'rgba(153, 102, 255, 1)',
+                'rgba(255, 159, 64, 1)'
+            ],
+            borderWidth: 1
+        }]
+    },
+    options: {
+        scales: {
+            yAxes: [{
+                ticks: {
+                    beginAtZero: true
+                }
+            }]
+        }
+    }
+});
+</script>
 
 
 {% endblock content %}
