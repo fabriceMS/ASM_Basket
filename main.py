@@ -82,24 +82,44 @@ def getIntraExtra(city,city_to_compare='MANTES-LA-JOLIE'):
 
 # Charge un fichier CSV 
 def load_csv(csvFile):
+    
+    
+    # Variable initialisation
+    intra_extra_array = [] 
+    age_array = []
+    category_array = []
+    price_array = []
+
+    column_names = ['organisation','lb_org','license','nom','prenom','adresse','code_postal','commune',
+        'cd_lic','qualification','sexe','taille','cd_cat','cd_ass','naissance','lieu_naissance',
+        'numero_licence','certificat_medical','date_fin_certificat_medical','nationalite',
+        'telephone_domicile','telephone_professionnel','telephone_portable','mail',
+        'telephone_mineur_mere','mail_mineur_mere','telephone_mineur_pere','mail_mineur_pere',
+        'autorisation_partenaire','Textbox1']
+
+    
+    
     # Ouvertur du CSV dans un DataFrame
-    df = pd.read_csv(csvFile)
-    df.dropna()
+    df = pd.read_csv(csvFile, header=0, names=column_names)
+    
+    # Replace NaN by value -1
+    df = df.fillna(-1)
+
+    # Convert float column to int (limitation of Pandas: NaN is a float)
+    df.taille = df.taille.astype(int)
+    df.license = df.license.astype(int)
+    df.code_postal = df.code_postal.astype(int)
 
 
     # Calcul de la date de naissance
     df['naissance'] = pd.to_datetime(df['naissance'], dayfirst=True)
     #print(df.info())
 
-
-    intra_extra_array = [] 
-    age_array = []
-    category_array = []
-    price_array = []
+    # Calculate the new output   
     for index, row in df.iterrows():
 
         # Calcul INTRA ou EXTRA
-        intra_extra = getIntraExtra(row['lb_cmne'])
+        intra_extra = getIntraExtra(row['commune'])
         intra_extra_array.append(intra_extra)
 
         # Calcul de l'age
@@ -123,15 +143,16 @@ def load_csv(csvFile):
     df['Price'] = price_array
     df.to_csv('new_data.csv')
 
-    new_df = df.filter(['nom','prenom','adresse','code_postal','lb_cname','INTRA/EXTRA','age','naissance','id_lice','sexe','taille','Price', 'Category'])
+    # Create the new CSV
+    new_df = df.filter(['nom','prenom','adresse','code_postal','commune','INTRA/EXTRA','age','naissance','id_lice','sexe','taille','Price', 'Category'])
     new_df.fillna(0, inplace=True)
-    convert_dict = {'code_postal': int, 'age': int, 'id_lice': int, 'taille': int, 'Price': int}
+    convert_dict = {'code_postal': int, 'age': int, 'license': int, 'taille': int, 'Price': int}
     new_df.code_postal.astype(int)
     
     
-    new_df = new_df.astype(convert_dict)
+    #new_df = new_df.astype(convert_dict)
     print(new_df.info())
-    new_df.to_csv('new_data.csv')
+    new_df.to_csv('new_data_asm.csv')
     #new_df.to_json('new_data.json')
 
 
@@ -149,14 +170,20 @@ def load_csv(csvFile):
 # Calcul les sommes à retourner en fonction des INTRA et EXTRA
 def calculateReturnValues(df_players):
     nb_intra_by_category = df_players.groupby('INTRA/EXTRA')['Category'].count()
+    print('Nombre de joueur par catégorie: {}'.format(nb_intra_by_category))
+
+
 
     nb_intra = nb_intra_by_category['INTRA']
     nb_extra = nb_intra_by_category['EXTRA']
 
     return_intra = nb_intra * 5
     return_extra = nb_extra * 10
+    print(return_extra)
+    print(return_intra)
 
     to_return = {'INTRA': return_intra, 'EXTRA': return_extra}
+    print(to_return)
 
     return to_return
 
@@ -164,7 +191,7 @@ def calculateReturnValues(df_players):
 
 if __name__ == "__main__":
     print('Bienvenue sur ASM Basket')
-    file = 'data.csv'
+    file = 'asm2020.csv'
 
     #print (getIntraExtra('Mantes'))
     players = load_csv(file)
